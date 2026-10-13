@@ -30,3 +30,9 @@ button:hover { background: var(--accent-600); }
 button:disabled { opacity: .45; cursor: default; }
 .escondido { display: none; }
 small { display: block; color: var(--muted); font-size: 13px; margin-top: 24px; }
+/* Páginas de texto (política de privacidade) */
+main.texto { max-width: 720px; }
+h2 { font-size: 19px; font-weight: 800; margin: 28px 0 8px; }
+ul { margin: 0 0 12px; padding-left: 20px; }
+ul li { font-size: 15px; line-height: 1.5; margin-bottom: 6px; }
+a { color: var(--teal); font-weight: 600; }

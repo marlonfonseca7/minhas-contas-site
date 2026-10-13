@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minhas Contas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<link rel="icon" href="icone.svg">
+</head>
+<body>
+<div class="topo"><div class="marca"><img src="icone.svg" alt=""><span>MINHAS CONTAS</span></div></div>
+<main>
+  <!-- Confirmação de e-mail deu certo -->
+  <section id="confirmado" class="escondido">
+    <div class="kicker">Conta</div>
+    <h1>E-mail confirmado</h1>
+    <div class="faixa ok">Sua conta está pronta.</div>
+    <ol>
+      <li>Pode fechar esta página.</li>
+      <li>Volte para o Minhas Contas. Se ele ainda estiver na tela "Confirme seu e-mail", vai entrar sozinho em alguns segundos.</li>
+      <li>Se você fechou o app, abra de novo e entre com o seu e-mail e senha.</li>
+    </ol>
+  </section>
+
+  <!-- Link vencido ou inválido -->
+  <section id="erro" class="escondido">
+    <div class="kicker">Conta</div>
+    <h1>Este link não vale mais</h1>
+    <div class="faixa alerta" id="erro-detalhe">O link já foi usado ou passou do prazo.</div>
+    <p>Se você já tinha clicado nele antes, sua conta provavelmente já está confirmada: volte ao app e entre com o seu e-mail e senha.</p>
+    <p>Se não conseguir entrar, no app clique em <b>Reenviar e-mail</b> e use o link novo.</p>
+  </section>
+
+  <!-- Acesso direto ao site -->
+  <section id="inicio" class="escondido">
+    <div class="kicker">Finanças pessoais</div>
+    <h1>Minhas Contas</h1>
+    <p>Esta página recebe os links dos e-mails do aplicativo Minhas Contas (confirmação de conta e criação de senha nova).</p>
+    <p>Para usar o app, abra o Minhas Contas no seu computador ou celular.</p>
+  </section>
+  <small>Minhas Contas · CajuíPalmeira</small>
+</main>
+<script>
+  // O Supabase volta para cá com os dados no fim do endereço (#... ou ?...)
+  const p = new URLSearchParams(location.hash.slice(1) + '&' + location.search.slice(1));
+  const mostrar = (id) => document.getElementById(id).classList.remove('escondido');
+  if (p.get('error') || p.get('error_code') || p.get('error_description')) {
+    const d = (p.get('error_description') || '').replace(/\+/g, ' ');
+    if (/expired|invalid/i.test(d)) document.getElementById('erro-detalhe').textContent = 'O link já foi usado ou passou do prazo.';
+    mostrar('erro');
+  } else if (p.get('access_token') || p.get('code') || p.get('type') === 'signup') {
+    mostrar('confirmado');
+  } else {
+    mostrar('inicio');
+  }
+  // Tira o token do endereço (não fica no histórico do navegador)
+  if (location.hash || location.search) history.replaceState(null, '', location.pathname);
+</script>
+</body>
+</html>

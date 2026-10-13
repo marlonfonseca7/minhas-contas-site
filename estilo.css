@@ -1,0 +1,32 @@
+/* Minhas Contas · site (identidade CajuíPalmeira) */
+:root {
+  --bg:#F5F4F1; --surface:#EBE9E5; --text:#0F2A29; --muted:#4F5F5E; --divider:rgba(6,76,74,.38);
+  --teal:#004948; --teal-900:#032E2D; --teal-300:#9CC3C0; --teal-100:#E3EFEE;
+  --accent:#FC6501; --accent-600:#E85A05; --accent-100:#FFF1E7; --accent-700:#B54300; --accent-800:#7F2F00;
+}
+* { box-sizing: border-box; border-radius: 0; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: "Archivo", system-ui, sans-serif; }
+body { min-height: 100vh; }
+.topo { background: var(--teal); color: #fff; padding: 28px 20px 24px; }
+.topo .marca { display: flex; align-items: center; gap: 12px; max-width: 520px; margin: 0 auto; }
+.topo .marca span { font-size: 12px; letter-spacing: .12em; font-weight: 600; color: var(--teal-300); }
+.topo .marca img { width: 40px; height: 40px; background: var(--bg); padding: 4px; }
+main { max-width: 520px; margin: 0 auto; padding: 28px 20px 48px; }
+.kicker { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+h1 { font-size: 30px; font-weight: 800; line-height: 1.1; margin: 4px 0 12px; padding-bottom: 12px; border-bottom: 2px solid var(--divider); }
+p { font-size: 15px; line-height: 1.5; margin: 0 0 12px; }
+.faixa { padding: 12px 14px; font-weight: 600; font-size: 14px; line-height: 1.4; margin: 16px 0; }
+.faixa.ok { background: var(--teal-100); color: var(--teal); }
+.faixa.alerta { background: var(--accent-100); color: var(--accent-800); }
+ol { padding: 0; margin: 16px 0; list-style: none; counter-reset: p; border-top: 2px solid var(--divider); }
+ol li { counter-increment: p; position: relative; padding: 12px 0 12px 34px; border-bottom: 1px solid var(--divider); font-size: 15px; }
+ol li::before { content: counter(p); position: absolute; left: 0; top: 10px; font-size: 18px; font-weight: 800; color: var(--teal); }
+label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin: 16px 0 6px; }
+input { width: 100%; height: 46px; border: 1px solid var(--divider); background: #fff; padding: 0 12px; font: 600 16px "Archivo", sans-serif; color: var(--text); }
+input:focus { outline: none; border: 2px solid var(--accent); }
+button { margin-top: 20px; width: 100%; height: 54px; border: 0; background: var(--accent); color: var(--teal-900);
+  font: 800 16px "Archivo", sans-serif; display: flex; justify-content: space-between; align-items: center; padding: 0 18px; cursor: pointer; }
+button:hover { background: var(--accent-600); }
+button:disabled { opacity: .45; cursor: default; }
+.escondido { display: none; }
+small { display: block; color: var(--muted); font-size: 13px; margin-top: 24px; }

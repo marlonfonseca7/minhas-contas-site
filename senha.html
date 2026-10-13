@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Senha nova · Minhas Contas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<link rel="icon" href="icone.svg">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="topo"><div class="marca"><img src="icone.svg" alt=""><span>MINHAS CONTAS</span></div></div>
+<main>
+  <section id="carregando">
+    <div class="kicker">Conta</div>
+    <h1>Senha nova</h1>
+    <p>Conferindo o link…</p>
+  </section>
+
+  <section id="formulario" class="escondido">
+    <div class="kicker">Conta</div>
+    <h1>Crie uma senha nova</h1>
+    <p id="conta"></p>
+    <form id="form">
+      <label for="senha">Senha nova (pelo menos 6 caracteres)</label>
+      <input id="senha" type="password" autocomplete="new-password" required minlength="6">
+      <label for="senha2">Repita a senha nova</label>
+      <input id="senha2" type="password" autocomplete="new-password" required minlength="6">
+      <div id="form-erro" class="faixa alerta escondido"></div>
+      <button id="salvar" type="submit"><span>Salvar senha nova</span><span>→</span></button>
+    </form>
+  </section>
+
+  <section id="pronto" class="escondido">
+    <div class="kicker">Conta</div>
+    <h1>Senha alterada</h1>
+    <div class="faixa ok">Sua senha nova já está valendo.</div>
+    <ol>
+      <li>Pode fechar esta página.</li>
+      <li>Volte para o Minhas Contas e entre com o seu e-mail e a senha nova.</li>
+    </ol>
+  </section>
+
+  <section id="erro" class="escondido">
+    <div class="kicker">Conta</div>
+    <h1>Este link não vale mais</h1>
+    <div class="faixa alerta">O link já foi usado ou passou do prazo.</div>
+    <p>No app, clique em <b>Esqueci minha senha</b> de novo e use o link do e-mail mais recente.</p>
+  </section>
+  <small>Minhas Contas · CajuíPalmeira</small>
+</main>
+<script>
+  // Endereço e chave publicável do projeto (os mesmos de lib/config/nuvem.dart).
+  // A chave publicável pode ficar aqui: sem o link do e-mail, ela não dá acesso a nada.
+  const SUPABASE_URL = 'https://kssuwaefogjgrpleowmf.supabase.co';
+  const SUPABASE_CHAVE = 'sb_publishable_mtg1RP9bGnR22InC9mQFGw_B_9hvOZI';
+
+  const mostrar = (id) => {
+    for (const s of document.querySelectorAll('main > section')) s.classList.add('escondido');
+    document.getElementById(id).classList.remove('escondido');
+  };
+
+  const p = new URLSearchParams(location.hash.slice(1) + '&' + location.search.slice(1));
+  if (p.get('error') || p.get('error_code')) {
+    mostrar('erro');
+  } else {
+    const cliente = supabase.createClient(SUPABASE_URL, SUPABASE_CHAVE, {
+      auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: false },
+    });
+
+    cliente.auth.getSession().then(({ data }) => {
+      history.replaceState(null, '', location.pathname); // tira o token do endereço
+      const sessao = data && data.session;
+      if (!sessao) { mostrar('erro'); return; }
+      document.getElementById('conta').textContent = 'Conta: ' + (sessao.user.email || '');
+      mostrar('formulario');
+    });
+
+    document.getElementById('form').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const senha = document.getElementById('senha').value;
+      const senha2 = document.getElementById('senha2').value;
+      const erro = document.getElementById('form-erro');
+      const avisar = (t) => { erro.textContent = t; erro.classList.remove('escondido'); };
+      erro.classList.add('escondido');
+      if (senha.length < 6) return avisar('A senha precisa ter pelo menos 6 caracteres.');
+      if (senha !== senha2) return avisar('As duas senhas não são iguais.');
+
+      const botao = document.getElementById('salvar');
+      botao.disabled = true;
+      const { error } = await cliente.auth.updateUser({ password: senha });
+      botao.disabled = false;
+      if (error) {
+        const m = (error.message || '').toLowerCase();
+        if (m.includes('different from the old')) return avisar('A senha nova precisa ser diferente da antiga.');
+        if (m.includes('weak') || m.includes('should be')) return avisar('Senha fraca. Use letras e números.');
+        return avisar('Não foi possível salvar: ' + error.message);
+      }
+      await cliente.auth.signOut();
+      mostrar('pronto');
+    });
+  }
+</script>
+</body>
+</html>
